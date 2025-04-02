@@ -341,7 +341,18 @@ func (s *DbUtils) GetInfoByHost(host string, r *http.Request) (h *Host, err erro
 		}
 		return true
 	})
+    // 筛选出精确匹配的 Host（Host 字段等于当前 host）
+    exactHosts := make([]*Host, 0)
+    for _, v := range hosts {
+        if v.Host == host { // 精确匹配
+            exactHosts = append(exactHosts, v)
+        }
+    }
 
+    // 优先处理精确匹配的 Host
+    if len(exactHosts) > 0 {
+        hosts = exactHosts // 替换为精确匹配的 Host 列表
+    }
 	for _, v := range hosts {
 		//If not set, default matches all
 		if v.Location == "" {
